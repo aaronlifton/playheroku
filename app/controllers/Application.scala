@@ -13,7 +13,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text, optional}
 
 import org.squeryl.PrimitiveTypeMode._
-import models.{AppDB, Bar}
+import models.{AppDB, Thread}
 
 object JacksonWrapper {
   val mapper = new ObjectMapper()
@@ -34,7 +34,7 @@ object JacksonWrapper {
   }
 
   private [this] def typeFromManifest(m: Manifest[_]): Type = {
-    if (m.typeArguments.isEmpty) { m.runtimeClass }
+    if (m.typeArguments.isEmpty) m.runtimeClass
     else new ParameterizedType {
       def getRawType = m.runtimeClass
       def getActualTypeArguments = m.typeArguments.map(typeFromManifest).toArray
@@ -44,31 +44,33 @@ object JacksonWrapper {
 }
 
 object Application extends Controller {
-  
-  val barForm = Form(
+   
+  val threadForm = Form(
   	mapping(
   		"name" -> optional(text)
-		)(Bar.apply)(Bar.unapply)
+		)(Thread.apply)(Thread.unapply)
   )
 
   def index = Action {
     // Ok(views.html.index("Your new application is ready."))
-    Ok(views.html.index(barForm))
+    Ok(views.html.index(threadForm))
   }
 
-  def addBar = Action { implicit request =>
-  	barForm.bindFromRequest.value map { bar =>
-  		inTransaction(AppDB.barTable insert bar)
-  		Redirect(routes.Application.index())
+  def addThread = Action { implicit request =>
+  	threadForm.bindFromRequest.value map { thread =>
+		val json = JacksonWrapper.serialize(thread)
+  		inTransaction(AppDB.threadTable insert thread)
+		Ok(json).as(JSON)
+  		// Redirect(routes.Application.index())
   	} getOrElse BadRequest
   }
 
-   def getBars = Action {
+   def getThreads = Action {
     val json = inTransaction {
-      val bars = from(AppDB.barTable)(barTable =>
-        select(barTable)
+      val threads = from(AppDB.threadTable)(threadTable =>
+        select(threadTable)
       )
-      JacksonWrapper.serialize(bars)
+      JacksonWrapper.serialize(threads)
     }
     Ok(json).as(JSON)
   }
