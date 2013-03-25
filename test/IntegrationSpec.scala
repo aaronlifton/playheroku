@@ -18,7 +18,7 @@ class IntegrationSpec extends Specification {
 
         browser.goTo("http://localhost:3333/")
 
-        browser.pageSource must contain("Welcome to Play 2.0")
+        browser.pageSource must contain("Asssembly.io")
        
       }
     }

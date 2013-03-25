@@ -3,7 +3,7 @@ package test
 import org.specs2.mutable._
 
 import controllers.routes
-import models.{AppDB, Bar}
+import models.{AppDB, Thread}
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -22,9 +22,9 @@ import play.api.test.Helpers._
  */
 class ApplicationSpec extends FlatSpec with ShouldMatchers {
     
-    "A request to the addBar action" should "respond" in {
+    "A request to the addThread action" should "respond" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
-        val result = controllers.Application.addBar(FakeRequest().withFormUrlEncodedBody("name" -> "FooBar"))
+        val result = controllers.Application.addThread(FakeRequest().withFormUrlEncodedBody("name" -> "FooThread"))
         status(result) should equal (SEE_OTHER)
         redirectLocation(result) should equal (Some(routes.Application.index.url))
       }

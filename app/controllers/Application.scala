@@ -13,7 +13,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text, optional}
 
 import org.squeryl.PrimitiveTypeMode._
-import models.{AppDB, Thread}
+import models._
 
 object JacksonWrapper {
   val mapper = new ObjectMapper()
@@ -59,7 +59,7 @@ object Application extends Controller {
   def addThread = Action { implicit request =>
   	threadForm.bindFromRequest.value map { thread =>
 		val json = JacksonWrapper.serialize(thread)
-  		inTransaction(AppDB.threadTable insert thread)
+  		inTransaction(CoreSchema.threadTable insert thread)
 		Ok(json).as(JSON)
   		// Redirect(routes.Application.index())
   	} getOrElse BadRequest
@@ -67,12 +67,26 @@ object Application extends Controller {
 
    def getThreads = Action {
     val json = inTransaction {
-      val threads = from(AppDB.threadTable)(threadTable =>
+      val threads = from(CoreSchema.threadTable)(threadTable =>
         select(threadTable)
       )
       JacksonWrapper.serialize(threads)
     }
     Ok(json).as(JSON)
+  }
+  
+  def getThread = Action {
+      inTransaction {
+        //Session.currentSession.setLogger(println)
+        from(CoreSchema.threadTable)(thread =>
+          where(thread.id == id)
+          select(thread)
+        ).headOption match {
+          case Some(item) => Ok(views.html.thread(item))
+          case None       => NotFound(views.html.notfound())
+        }
+      }
+    }
   }
   
 }
