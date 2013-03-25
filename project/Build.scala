@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
     anorm,
     "org.scalatest" %% "scalatest" % "1.9.1" % "test",
     "org.squeryl" %% "squeryl" % "0.9.5-6",
-    // "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+    "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     // "mysql" % "mysql-connector-java" % "5.1.18",
     "com.fasterxml.jackson.core" % "jackson-core" % "2.1.1",
     "com.fasterxml.jackson.core" % "jackson-databind" % "2.1.1",
