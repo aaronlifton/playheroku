@@ -5,7 +5,7 @@ import play.api.Play.current
  
 import anorm._
 import anorm.SqlParser._
- 
+
 case class Thread(id: Pk[Long], name: String)
  
 object Thread {

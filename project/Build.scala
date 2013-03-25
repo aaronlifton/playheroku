@@ -21,7 +21,10 @@ object ApplicationBuild extends Build {
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    testOptions in Test := Nil    
+    testOptions in Test := Nil,
+	resolvers += Resolver.url("Tindr's Play module repository", 
+	    url("http://tindr.github.com/releases/"))
+	    (Resolver.ivyStylePatterns) 
   )
 
 }
