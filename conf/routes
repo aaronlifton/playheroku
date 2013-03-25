@@ -6,7 +6,7 @@
 GET     /                           controllers.Application.index
 POST    /threads                    controllers.Application.addThread
 GET     /threads                    controllers.Application.getThreads
-GET		/threads/:id				controllers.Application.getThread(id)
+# GET		/threads/:id				controllers.Application.getThread(id)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

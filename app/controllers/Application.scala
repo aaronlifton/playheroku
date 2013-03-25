@@ -10,9 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.`type`.TypeReference;
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text, optional}
+import play.api.data.Forms.{single, nonEmptyText}
+import play.api.mvc.{Action, Controller}
+import anorm.NotAssigned
 
-import org.squeryl.PrimitiveTypeMode._
 import models._
 
 object JacksonWrapper {
@@ -46,9 +47,7 @@ object JacksonWrapper {
 object Application extends Controller {
    
   val threadForm = Form(
-  	mapping(
-  		"name" -> optional(text)
-		)(Thread.apply)(Thread.unapply)
+	  single("name" -> nonEmptyText)
   )
 
   def index = Action {
@@ -57,36 +56,22 @@ object Application extends Controller {
   }
 
   def addThread = Action { implicit request =>
-  	threadForm.bindFromRequest.value map { thread =>
-		val json = JacksonWrapper.serialize(thread)
-  		inTransaction(CoreSchema.threadTable insert thread)
-		Ok(json).as(JSON)
-  		// Redirect(routes.Application.index())
-  	} getOrElse BadRequest
-  }
-
-   def getThreads = Action {
-    val json = inTransaction {
-      val threads = from(CoreSchema.threadTable)(threadTable =>
-        select(threadTable)
-      )
-      JacksonWrapper.serialize(threads)
-    }
-    Ok(json).as(JSON)
+    val json = JacksonWrapper.serialize(threadForm.bindFromRequest.value)
+  	threadForm.bindFromRequest.fold(
+		errors => BadRequest,
+		{
+			case (name) =>
+				Thread.create(Thread(NotAssigned, name))
+				Ok(json).as(JSON)
+		  		// Redirect(routes.Application.index())
+		}
+	)
   }
   
-  def getThread = Action {
-      inTransaction {
-        //Session.currentSession.setLogger(println)
-        from(CoreSchema.threadTable)(thread =>
-          where(thread.id == id)
-          select(thread)
-        ).headOption match {
-          case Some(item) => Ok(views.html.thread(item))
-          case None       => NotFound(views.html.notfound())
-        }
-      }
-    }
+   def getThreads = Action {
+    var threads = Thread.findAll()
+	val json = JacksonWrapper.serialize(threads)
+    Ok(json).as(JSON)
   }
   
 }
