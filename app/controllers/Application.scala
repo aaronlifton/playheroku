@@ -19,6 +19,11 @@ import models._
 import anorm._
 import anorm.SqlParser._
 
+import play.api.libs.json._
+import play.api.libs.json.util._
+import play.api.libs.json.Reads._
+import play.api.data.validation.ValidationError
+
 object JacksonWrapper {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
@@ -48,7 +53,15 @@ object JacksonWrapper {
 }
 
 object Application extends Controller {
-   
+ // def notEqualReads[T](v: T)(implicit r: Reads[T]): Reads[T] = Reads.filterNot(ValidationError("validate.error.unexpected.value", v))( _ == v )
+ // 
+ //  def skipReads(implicit r: Reads[String]): Reads[String] = r.map(_.substring(2))
+ // 
+ //  implicit val threadReads: Reads[Thread] = (
+ //    (__ \ "id").read[Long],
+ //    (__ \ "name").read[String]
+ //  )(Thread)
+	
   val threadForm = Form(
 	  single("name" -> nonEmptyText)
   )
