@@ -36,7 +36,7 @@ object Thread {
   }
   
   // def findByParam(param: String, paramVal: [_])
- 
+  
   def create(thread: Thread): Unit = {
     DB.withConnection { implicit connection =>
       SQL("insert into thread(name) values ({name})").on(
@@ -45,14 +45,14 @@ object Thread {
     }
   }
   
-  def createAndReturnId(thread: Thread): Option[Thread] = {
+  def createAndReturnId(thread: Thread): Option[Long] = {
     DB.withConnection { implicit connection =>
 	  SQL("insert into thread(name) values ({name})").on(
 		'name -> thread.name
 	  ).executeInsert()
     } match {
-      case t: Option[Thread] => t
-	  // case i: Option[Long] => i
+      // case t: Option[Thread] => t
+	  case i: Option[Long] => i
 	}
   }
  

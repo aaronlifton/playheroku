@@ -1,5 +1,18 @@
-@(thread: models.Thread)
+@(form: play.api.data.Form[String], thread: models.Thread, messages: Seq[models.Message])
 
 @main("Assembly.io") {
 	<h2>@thread.name</h2>    
+    
+	@helper.form(action = routes.Application.addMessage(thread.id.get)) {
+		@helper.inputText(form("body"))
+        <input id="messageSubmit" type="submit"/>
+    }
+	<script type="text/javascript">var thread_id=@thread.id</script>
+	<script src="@routes.Assets.at("javascripts/thread.min.js")" type="text/javascript"></script>
+	
+	<ul id="messages">
+	@messages.map { message =>
+		<li>@message.id - @message.body</li>
+	}
+	</ul>
 }
