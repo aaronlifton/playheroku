@@ -77,17 +77,22 @@ object Application extends Controller {
 		errors => BadRequest,
 		{
 			case (name) =>
-				Thread.create(Thread(NotAssigned, name))
+				val id = Thread.create(Thread(NotAssigned, name))
 				Ok(json).as(JSON)
 		  		// Redirect(routes.Application.index())
 		}
 	)
   }
   
-   def getThreads = Action {
-    var threads = Thread.findAll()
-	val json = JacksonWrapper.serialize(threads)
-    Ok(json).as(JSON)
+  def getThreads = Action {
+     var threads = Thread.findAll()
+	 val json = JacksonWrapper.serialize(threads)
+     Ok(json).as(JSON)
+  }
+  
+  def getThread(id: Long) = Action {
+    var thread = Thread.findById(id) //.getOrElse(NotFound)
+    Ok(views.html.thread(thread))
   }
   
 }

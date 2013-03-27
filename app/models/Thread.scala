@@ -22,7 +22,7 @@ object Thread {
       SQL("select * from thread").as(Thread.simple *)
     }
   }
-  def findById(id: Pk[Int]): Thread = {
+  def findById(id: Long): Thread = {
     DB.withConnection { implicit connection => 
       SQL("select * from thread where id = {id}")
 	  .on("id" -> id).using(simple).single() // quirky
