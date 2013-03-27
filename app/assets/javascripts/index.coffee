@@ -7,7 +7,7 @@ $(document).ready ->
     e.preventDefault()
     $.post "/threads",
       name: $("#name").val()
-      (data) -> append_thread $("#name").val(), data.id
+      (data) -> append_thread $("#name").val(), 999
 
   return
 
