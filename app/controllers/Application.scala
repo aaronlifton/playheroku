@@ -72,12 +72,12 @@ object Application extends Controller {
   }
 
   def addThread = Action { implicit request =>
-    val json = JacksonWrapper.serialize(threadForm.bindFromRequest.value)
   	threadForm.bindFromRequest.fold(
 		errors => BadRequest,
 		{
 			case (name) =>
-				val id = Thread.create(Thread(NotAssigned, name))
+				val threadId = Thread.createAndReturnId(Thread(NotAssigned, name))
+			    val json = JacksonWrapper.serialize(threadId.getOrElse(None))
 				Ok(json).as(JSON)
 		  		// Redirect(routes.Application.index())
 		}

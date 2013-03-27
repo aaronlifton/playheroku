@@ -45,12 +45,15 @@ object Thread {
     }
   }
   
-  def createAndReturnId(thread: Thread): Unit = {
+  def createAndReturnId(thread: Thread): Option[Thread] = {
     DB.withConnection { implicit connection =>
 	  SQL("insert into thread(name) values ({name})").on(
 		'name -> thread.name
-	  ).executeInsert().get
-    }
+	  ).executeInsert()
+    } match {
+      case t: Option[Thread] => t
+	  // case i: Option[Long] => i
+	}
   }
  
 }
