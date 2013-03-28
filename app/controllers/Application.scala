@@ -53,6 +53,57 @@ object JacksonWrapper {
   }
 }
 
+class Pusher {
+  val appId = Play.configuration.getProperty("pusher.appId")
+  val key = Play.configuration.getProperty("pusher.key")
+  val secret = Play.configuration.getProperty("pusher.secret")
+  
+  import java.security.MessageDigest
+  import java.math.BigInteger
+  import javax.crypto.Mac
+  import javax.crypto.spec.SecretKeySpec
+  
+  def trigger(channel:String, event:String, message:String):HttpResponse = {
+    val domain = "api.pusherapp.com"
+    val url = "/apps/"+appId+"/channels/"+channel+"/events";
+    val body = message
+    
+    val params = List( 
+      ("auth_key", key),
+      ("auth_timestamp", (new Date().getTime()/1000) toInt ),
+      ("auth_version", "1.0"),
+      ("name", event),
+      ("body_md5", md5(body))
+    ).sort( (a,b) => a._1 < b._1 ).map( o => o._1+"="+WS.encode(o._2.toString) ).mkString("&");
+    
+    val signature = sha256( List("POST", url, params).mkString("\n"), secret ); 
+     
+    WS.url("http://"+domain+url+"?"+params+"&auth_signature="+WS.encode(signature)).body(body).post()
+  }
+  
+  def byteArrayToString(data: Array[Byte]) = {
+     val hash = new BigInteger(1, data).toString(16);
+     "0"*(32-hash.length) + hash
+  }
+  def md5(s: String):String = byteArrayToString(MessageDigest.getInstance("MD5").digest(s.getBytes("US-ASCII")));
+  
+  def sha256(s: String, secret: String):String = {
+    val mac = Mac.getInstance("HmacSHA256");
+    mac.init(new SecretKeySpec( secret.getBytes(), "HmacSHA256"));
+    val digest = mac.doFinal(s.getBytes());
+    String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));
+  }
+}
+
+object WebSockets extends Pusher {
+  val channel = Play.configuration.getProperty("websockets.channel")
+  def trigger(event:String, message:String):HttpResponse = trigger(channel, event, message)
+}
+ 
+object Test {
+  def test = WebSockets.trigger("hello", "{ \"message\": \"test\" }")
+}
+
 object Application extends Controller {
  // def notEqualReads[T](v: T)(implicit r: Reads[T]): Reads[T] = Reads.filterNot(ValidationError("validate.error.unexpected.value", v))( _ == v )
  // 
@@ -94,6 +145,7 @@ object Application extends Controller {
   def getThreads = Action {
      val threads = Thread.findAll()
 	 val json = JacksonWrapper.serialize(threads)
+	 Test.test()
      Ok(json).as(JSON)
   }
   
