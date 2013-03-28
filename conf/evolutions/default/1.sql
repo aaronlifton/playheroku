@@ -5,7 +5,7 @@
 create sequence s_thread_id;
 
 create table thread (
-  id    bigint DEFAULT nextval('s_thread_id'),
+  id    bigint DEFAULT nextval('s_thread_id') PRIMARY KEY,
   name  varchar(128)
 );
 

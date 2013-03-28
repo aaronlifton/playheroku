@@ -5,7 +5,7 @@
 create sequence s_message_id;
 
 create table message (
-  id      bigint DEFAULT nextval('s_message_id'),
+  id      bigint DEFAULT nextval('s_message_id') PRIMARY KEY,
   thread  bigint references thread(id),
   body    text
 );
