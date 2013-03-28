@@ -13,4 +13,11 @@ $(document).ready ->
 
 append_thread = (name, id) ->
   link = $("<a>").text(name).attr("href","/threads/"+id)
-  $("#threads").append $("<li>").append link
+  trel = $('<tr>
+	      <td><input type="checkbox"> <a href="#"><i class="icon-star"></i></a></td>
+	      <td><strong>John Doe</strong></td>
+	      <td><span class="label pull-right"></span></td>
+	      <td class="thread-name"><strong><a href="' + "/threads/"+id + '">' + name + '</a></strong></td>
+	      <td><strong>Sept3</strong></td>
+	    </tr>');
+  $("#threads").append $(trel)

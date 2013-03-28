@@ -8,5 +8,5 @@ $(document).ready ->
   return
 
 append_message = (body, id) ->
-  link = $("<li>").text id + " - " + body
+  link = $("<div class='well'>").text id + " - " + body
   $("#messages").append link
