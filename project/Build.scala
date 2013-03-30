@@ -6,7 +6,7 @@ object ApplicationBuild extends Build {
 
   val appName         = "playheroku"
   val appVersion      = "1.0-SNAPSHOT"
-
+  
   val appDependencies = Seq(
     // Add your project dependencies here,
     jdbc,
@@ -19,12 +19,11 @@ object ApplicationBuild extends Build {
     "com.fasterxml.jackson.core" % "jackson-databind" % "2.1.1",
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3"
   )
-
+  
   val main = play.Project(appName, appVersion, appDependencies).settings(
     testOptions in Test := Nil,
 	resolvers += Resolver.url("Tindr's Play module repository", 
 	    url("http://tindr.github.com/releases/"))
 	    (Resolver.ivyStylePatterns) 
   )
-
 }
