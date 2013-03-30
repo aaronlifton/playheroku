@@ -56,4 +56,6 @@
     channel.bind('new-message', function(data) {
       alert(data);
     });
+    channel.trigger("new-message", "{test}");
+    
   </script>

@@ -81,7 +81,7 @@ class Pusher {
     val domain = "api.pusherapp.com"
     val url = "/apps/"+appId+"/channels/"+channel+"/events";
     val body = message
-    // val body = JsObject(Seq("test" -> message)) Seq([String, JsValue])
+    // val body = JsObject(Seq("test" -> message)) // Seq([String, JsValue])
     val params = List( 
       ("auth_key", key),
       ("auth_timestamp", (new Date().getTime()/1000) toInt ),
@@ -101,6 +101,7 @@ class Pusher {
      val hash = new BigInteger(1, data).toString(16);
      "0"*(32-hash.length) + hash
   }
+  
   def md5(s: String):String = byteArrayToString(MessageDigest.getInstance("MD5").digest(s.getBytes("US-ASCII")));
   
   def sha256(s: String, secret: String):String = {
@@ -165,7 +166,7 @@ object Application extends Controller {
   def getThreads = Action {
      val threads = Thread.findAll()
 	 val json = JacksonWrapper.serialize(threads)
-	 // Test.test
+	 Test.test
      Ok(json).as(JSON)
   }
   
