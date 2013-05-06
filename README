@@ -1,4 +1,6 @@
-This is your new Play 2.1 application
+Scala 2.10 + Play 2.1 + Websockets
 =====================================
 
-This file will be packaged with your application, when using `play dist`.
+* practical example of concurrency abstraction through futures/promises
+* mostly nonblocking - value of futures accessed asynchronously
+* deployable on Heroku
